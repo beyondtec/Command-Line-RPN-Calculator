@@ -1,0 +1,10 @@
+Command short keys:
+add:+
+subtract:-
+divide:/
+multiply:*
+cosine:c
+sine:s
+print::reg
+undo:u
+quit::q!
