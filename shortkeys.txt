@@ -6,5 +6,9 @@ multiply:*
 cosine:c
 sine:s
 print::reg
-undo:u
-quit::q!
+delete:D
+moveup:k
+movedown:j
+swapbottom:h
+swaptop:l
+quit::q

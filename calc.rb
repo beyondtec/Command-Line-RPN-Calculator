@@ -22,58 +22,59 @@ class Number
   end
   
   define_method arith["add"] do
-    #puts "Adding!"
+    puts "Adding!"
     a = @reg.pop
     b = @reg.pop
     c = a + b
-    puts c
+    #puts c
     @reg.push(c)
   end
   
   define_method arith["subtract"] do
-    #puts "Subtracting!"
+    puts "Subtracting!"
     a = @reg.pop
     b = @reg.pop
     c = b - a
-    puts c
+    #puts c
     @reg.push(c)
   end
   
   define_method arith["multiply"] do
-    #puts "Multiplying!"
+    puts "Multiplying!"
     a = @reg.pop
     b = @reg.pop
     c = a*b
-    puts c
+    #puts c
     @reg.push(c)
   end
   
   define_method arith["divide"] do
-    #puts "Dividing!"
+    puts "Dividing!"
     a = @reg.pop
     b = @reg.pop
     c = b/a
-    puts c
+    #puts c
     @reg.push(c)
   end
   
   define_method arith["sine"] do
-    #puts "Computing sine!"
+    puts "Computing sine!"
     a = @reg.pop
     c = Math.sin(a)
-    puts c
+    #puts c
     @reg.push(c)
   end
      
   define_method arith["cosine"] do
-    #puts "Computing cosine!"
+    puts "Computing cosine!"
     a = @reg.pop
     c = Math.cos(a)
-    puts c
+    #puts c
     @reg.push(c)
   end
   
-  define_method arith["undo"] do 
+  define_method arith["delete"] do 
+    puts "Deleting last reg!"
     @reg.pop
   end
   
@@ -84,6 +85,34 @@ class Number
   	   puts output
   	   regnum = regnum + 1
   	end
+  end
+  
+  define_method arith["moveup"] do
+    puts "Rotating!"
+    a = @reg.pop
+    @reg.unshift(a)
+  end
+  
+  define_method arith["movedown"] do
+    puts "Rotating!"
+    a = @reg.shift
+    @reg.push(a)
+  end
+  
+  define_method arith["swapbottom"] do
+    puts "Swapping bottom!"
+    a = @reg.pop
+    b = @reg.pop
+    @reg.push(a)
+    @reg.push(b)
+  end
+  
+  define_method arith["swaptop"] do
+    puts "Swapping top!"
+    a = @reg.shift
+    b = @reg.shift
+    @reg.unshift(a)
+    @reg.unshift(b)
   end
   
   def print
@@ -133,7 +162,7 @@ def main_loop
     c = readChar
 
     input.push(c.chr)
-    unless input[0] =~ /[1-9]/ or input[0] == ':' #skip if not a single char command
+    unless input[0] =~ /[0-9]/ or input[0] == ':' #skip if not a single char command
       #Handle exception if no method name
       begin
         calculations[index].send(input[0])
@@ -159,7 +188,7 @@ end
 
 if __FILE__ == $PROGRAM_NAME
   #puts ARGV[0]
-  puts "Starting Calculator... \n"
+  puts "Starting Calculator... \n"  
   #ARGV.pop
   main_loop
 end
