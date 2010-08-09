@@ -1,3 +1,5 @@
+require 'getoptlong'
+
 class Number
   def initialize(num=1)
   	@reg = Array.new(num) {|i| 0}
@@ -153,15 +155,16 @@ ensure
   system "stty #{old}"
 end  
 
-def main_loop
+def main_loop (fast)
   calculations = []  # strings of calculations
   calculations[0] = Number.new
   index = 0
   loop do
-    input = []
-    c = readChar
-
-    input.push(c.chr)
+  	if fast == 0
+  		#"Safe Mode"
+			input = []
+			c = readChar
+			input.push(c.chr)
     unless input[0] =~ /[0-9]/ or input[0] == ':' #skip if not a single char command
       #Handle exception if no method name
       begin
@@ -177,12 +180,68 @@ def main_loop
       if input[0] == ':'
         calculations[index].send(input.to_s)
       else
-        calculations[index].push(Float(input.to_s))
-      end
+	    	begin
+	  	  	calculations[index].push(Float(input.to_s))
+	  	  rescue
+	  	  	puts "Not a valid number"
+	  	  end
+      end  
     end
     puts "----"
     calculations[index].print
-  end      
+  	else
+  	  #"Fast Mode"
+  	  input = []
+  	  c = readChar
+  	  input.push(c.chr)
+	  	if input[0] == ':'
+	  	  print ':'
+	  	  string = gets.chomp
+	  	  input = input + string.to_a
+	  		calculations[index].send(input.to_s)
+	  	else
+  			unless input[0] =~ /[0-9]/ or input[0] == '.'
+  				begin
+		        calculations[index].send(input[0])
+		      rescue
+		        puts "No such method:"+input[0]
+		      end
+		    else 
+		    	#puts "getting a number"
+		    	print input[0]
+		    	while 1
+		    		#print "getting next int"
+		    		c = readChar
+		    		print c.chr
+		    		unless c.chr =~ /[0-9]/ or c.chr == '.' 
+		    		  #puts input.to_s
+		    		  #puts "testing"
+		    		  calculations[index].push(Float(input.to_s))
+		    		  begin
+		    		  	if c == 13 #Don't execute command if enter
+		    		  	  break
+		    		  	else
+		        			calculations[index].send(c.chr.to_s)
+		        		end
+		      		rescue
+		        		puts "No such method:"+c.chr.to_s
+		      		end #input = input + c.chr
+		    			break
+		    		else
+		    			#print c.chr	    			
+		    			input.push(c.chr)
+		    			#break
+		    		end
+		    		
+		    	end
+  	  	end 	 
+	  	  #c = readChar
+	  	  #exit if c.chr == 'q'
+	  	  puts "----"
+    		calculations[index].print
+	  	end
+  	end    	
+  end    
 end
 
 
@@ -190,7 +249,24 @@ if __FILE__ == $PROGRAM_NAME
   #puts ARGV[0]
   puts "Starting Calculator... \n"  
   #ARGV.pop
-  main_loop
+  opts = GetoptLong.new(
+    [ '--fast', GetoptLong::OPTIONAL_ARGUMENT ]
+  )
+  fastmode = 0
+  opts.each do |opt, arg|
+		case opt
+    	when '--fast'
+      	fastmode = 1
+    end
+  end
+  
+  if fastmode == 1
+    puts "Fast Mode"
+  else
+  	puts "Safe Mode"
+  end	
+  
+  main_loop fastmode
 end
 
 
